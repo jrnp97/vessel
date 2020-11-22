@@ -1,0 +1,198 @@
+openapi: 3.0.2
+info:
+  title: 'FPSO API'
+  description: 'Vessel Management.'
+  version: '1.0.0'
+paths:
+  /fpso/api/v1/vessels/:
+    post:
+      operationId: Vessel
+      description: Endpoint to Create a Vessel
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vessel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vessel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vessel'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vessel'
+          description: 'Response when creation is successfully'
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: 'Response when creation failed, filled with errors.'
+      tags:
+        - FPSO
+  /fpso/api/v1/vessels/{code}/:
+    get:
+      operationId: Vessel
+      description: 'Endpoint to request vessel information'
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: 'Vessel Code.'
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vessel'
+          description: ''
+      tags:
+      - FPSO
+  /fpso/api/v1/vessels/{code}/equipment/:
+    get:
+      operationId: Vessel-Equipment
+      description: Endpoint to get equipment for specified vessel.
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: 'Vessel Code'
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EquipmentComplete'
+          description: 'List of Equipments'
+      tags:
+      - FPSO
+    post:
+      operationId: Vessel-Equipment
+      description: Endpoint to register equipment for specified vessel.
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: 'Vessel Code'
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EquipmentCreation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EquipmentCreation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EquipmentCreation'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EquipmentComplete'
+          description: 'Response when Equipment is created.'
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EquipmentComplete'
+          description: 'Response when a Equipment is reactive.'
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: 'Response when creation failed, filled with errors.'
+      tags:
+      - FPSO
+    delete:
+      operationId: Vessel-Equipment
+      description: Endpoint to deactivate equipments massively for specified vessel.
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: 'Vessel Code.'
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MassiveCodes'
+      responses:
+        '204':
+          description: 'Response when equipments were successfully deactivate'
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: 'Response when creation failed, filled with errors.'
+      tags:
+      - FPSO
+components:
+  schemas:
+    Vessel:
+      type: object
+      properties:
+        code:
+          type: string
+          maxLength: 50
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - code
+    EquipmentCreation:
+      type: object
+      properties:
+        code:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 100
+        location:
+          type: string
+          maxLength: 100
+    EquipmentComplete:
+      type: object
+      properties:
+        code:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 100
+        location:
+          type: string
+          maxLength: 100
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    MassiveCodes:
+      type: object
+      properties:
+        code:
+          type: array
+          items:
+            type: string

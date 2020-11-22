@@ -17,7 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 
+from vessel.views import redirect_view
+
 urlpatterns = [
+    path('', redirect_view),
     path('admin/', admin.site.urls),
-    path('fpso/', include('fpso.urls')),
+    path('fpso/', include('fpso.urls', namespace='fpso')),
 ]
