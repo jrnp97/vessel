@@ -87,7 +87,7 @@ class TestVesselApi(TestCase):
                 'codes': [],
             },
             {
-                'codes': "Mimosa",
+                'codes': 'Mimosa',
             }
         ]
         for payload in bad_payloads:
@@ -209,9 +209,9 @@ class TestVesselApi(TestCase):
     def test_disable_equipment_and_active_after_create_a_new_with_same_code_on_vessel(self):
         self.create_vessel(self.vessel_code)
         payload = {
-            "name": "compressor",
-            "code": "5310B9D7",
-            "location": "Brazil"
+            'name': 'compressor',
+            'code': '5310B9D7',
+            'location': 'Brazil'
         }
         response = self.client.post(
             path=self.EQUIPMENT_URI.format(
@@ -247,4 +247,57 @@ class TestVesselApi(TestCase):
             response.status_code,
             status.HTTP_200_OK,
             msg=f'Equipment creation for Vessel {self.vessel_code} Failed, {response.json()}.',
+        )
+
+    def test_update_equipment_data_when_reactivate(self):
+        self.create_vessel(self.vessel_code)
+        payload = {
+            'name': 'compressor',
+            'code': '5310B9D7',
+            'location': 'Brazil',
+        }
+        response = self.client.post(
+            path=self.EQUIPMENT_URI.format(
+                prefix=self.API_PREFIX,
+                code=self.vessel_code,
+            ),
+            data=payload,
+        )
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED,
+            msg=f'Equipment creation for Vessel {self.vessel_code} Failed.',
+        )
+        response = self.client.delete(
+            path=self.EQUIPMENT_URI.format(
+                prefix=self.API_PREFIX,
+                code=self.vessel_code,
+            ),
+            data={
+                'codes': ['5310B9D7']
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        payload = {
+            'name': 'compressor',
+            'code': '5310B9D7',
+            'location': 'Colombia',
+        }
+        response = self.client.post(
+            path=self.EQUIPMENT_URI.format(
+                prefix=self.API_PREFIX,
+                code=self.vessel_code,
+            ),
+            data=payload,
+        )
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+
+        )
+        self.assertContains(
+            response,
+            status_code=status.HTTP_200_OK,
+            text='Colombia',
         )

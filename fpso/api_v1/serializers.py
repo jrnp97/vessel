@@ -36,7 +36,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
             'created_at',
         ]
 
-    def active_inactive_equipment(self, code, vessel):
+    def active_inactive_equipment(self, code, data, vessel):
         if not isinstance(code, str) or not code:
             return None
         equipment = vessel.equipment.filter(code=code.strip(), active=False)
@@ -44,7 +44,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
             return None
         _id = equipment[0].id
         equipment.update(active=True)
-        return self.__class__(Equipment.objects.get(id=_id))
+        return self.__class__(Equipment.objects.get(id=_id), data=data)
 
 
 class MassiveVesselEquipmentSerializer(serializers.Serializer):

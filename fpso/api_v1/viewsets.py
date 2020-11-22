@@ -45,9 +45,11 @@ class EquipmentNestedViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, D
         serializer = self.get_serializer()
         equipment_serializer = serializer.active_inactive_equipment(
             code=request.data.get('code'),
+            data=request.data,
             vessel=self.vessel_obj,
         )
-        if equipment_serializer:
+        if equipment_serializer and equipment_serializer.is_valid(raise_exception=True):
+            equipment_serializer.save()
             return Response(equipment_serializer.data, status=status.HTTP_200_OK)
         return super().create(request, *args, **kwargs)
 

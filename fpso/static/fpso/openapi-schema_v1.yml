@@ -110,13 +110,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EquipmentComplete'
-          description: 'Response when a Equipment is reactive.'
+          description: 'Response when equipment is reactive.'
         '400':
           content:
             application/json:
               schema:
                 type: object
-          description: 'Response when creation failed, filled with errors.'
+          description: 'Response when creation failed, response body with error details.'
       tags:
       - FPSO
     delete:
@@ -142,7 +142,7 @@ paths:
             application/json:
               schema:
                 type: object
-          description: 'Response when creation failed, filled with errors.'
+          description: 'Response when creation failed, response body with error details.'
       tags:
       - FPSO
 components:
