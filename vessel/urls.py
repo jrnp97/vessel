@@ -23,4 +23,5 @@ urlpatterns = [
     path('', redirect_view),
     path('admin/', admin.site.urls),
     path('fpso/', include('fpso.urls', namespace='fpso')),
+    path('auth/', include('auth_manager.urls', namespace='auth_manager')),
 ]

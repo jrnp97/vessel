@@ -1,13 +1,17 @@
 from django.test import TestCase
 
+from django.contrib.auth import get_user_model
+
 from rest_framework import status
 
+User = get_user_model()
 
 # Create your tests here.
 
 
 class TestVesselApi(TestCase):
     """ Class to define tests to proof VesselApi """
+    AUTH_URI = '/auth/api/v1/token/'
     API_PREFIX = '/fpso/api/v1'
     VESSEL_URI = '{prefix}/vessels/'
     VESSEL_DETAIL_URI = '{prefix}/vessels/{code}/'
@@ -15,6 +19,16 @@ class TestVesselApi(TestCase):
 
     def setUp(self) -> None:
         self.vessel_code = 'MV102'
+        self.cred = {
+            'username': 'test_api',
+            'password': 'test_pwd',
+        }
+        self.user = User.objects.create_user(**self.cred)
+        response = self.client.post(path=self.AUTH_URI, data=self.cred).json()
+        self.token = response['access']
+        self.client = self.client_class(
+            HTTP_AUTHORIZATION=f'Bearer {self.token}',
+        )
 
     def create_vessel(self, vessel_code):
         response = self.client.post(

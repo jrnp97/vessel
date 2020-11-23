@@ -3,8 +3,12 @@ Module to define api endpoints
 """
 from django.urls import path
 from django.views.generic import TemplateView
+
 from rest_framework.routers import SimpleRouter
-from rest_framework.schemas import get_schema_view
+
+from rest_framework_simplejwt.views import TokenVerifyView
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from fpso.api_v1.viewsets import VesselViewSet
 

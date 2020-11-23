@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 
+from datetime import timedelta
+
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -26,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -40,8 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fpso',
     'rest_framework',
+    'auth_manager',
+    'fpso',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +126,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
+JWT_TOKEN_LIFETIME_SECONDS = 600
+JWT_REFRESH_TOKEN_LIFETIME_DAYS = 1
+
+try:
+    exec(open(os.path.join(BASE_DIR, 'vessel', 'settings_local.py')).read())
+except ImportError:
+    pass
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=JWT_TOKEN_LIFETIME_SECONDS),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
